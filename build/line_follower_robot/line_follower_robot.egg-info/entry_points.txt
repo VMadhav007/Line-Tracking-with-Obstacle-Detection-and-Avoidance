@@ -1,0 +1,5 @@
+[console_scripts]
+line_tracker_node = line_follower_robot.line_tracker_node:main
+navigation_controller_node = line_follower_robot.navigation_controller_node:main
+obstacle_detector_node = line_follower_robot.obstacle_detector_node:main
+

@@ -1,0 +1,69 @@
+# =============================================================================
+# Line Follower Robot — Configuration Parameters
+# =============================================================================
+
+line_tracker_node:
+  ros__parameters:
+    # ── PID Controller Gains ──────────────────────────────────────────
+    # Kp: proportional — main steering response (lower = less wobble)
+    kp: 0.3
+    # Ki: integral — corrects small constant offset (keep low!)
+    ki: 0.0
+    # Kd: derivative — dampens oscillation / wobble (higher = smoother)
+    kd: 0.2
+
+    # ── Camera Offset Compensation ────────────────────────────────────
+    # Waffle camera is ~4.7cm right of robot center. This shifts the
+    # image target point so the robot body (not camera) tracks the line.
+    # Increase if robot still tracks to one side, decrease if overcorrected.
+    camera_offset_pixels: 25
+
+    # ── Derivative Low-Pass Filter ────────────────────────────────────
+    # Smooths the D term to prevent jitter/wobble (0.0-1.0)
+    # Lower = smoother but slower response, higher = noisier but faster
+    derivative_filter_alpha: 0.3
+
+    # ── Dynamic Speed ─────────────────────────────────────────────────
+    # Fast on straights, slow on curves
+    max_speed: 0.22
+    min_speed: 0.08
+    # Higher = more aggressive slowdown on curves
+    speed_sensitivity: 2.5
+
+    # ── Vision Pipeline ───────────────────────────────────────────────
+    # Fraction of image top to crop (0.6 = use bottom 40%)
+    crop_top_ratio: 0.60
+    # Grayscale threshold for black line detection (0-255)
+    black_threshold: 100
+    # Minimum moment area to consider as valid line (filters noise)
+    min_contour_area: 500
+
+    # ── Line Lost Recovery ────────────────────────────────────────────
+    recovery_linear_speed: 0.05
+    recovery_angular_speed: 0.3
+
+obstacle_detector_node:
+  ros__parameters:
+    # Distance threshold for obstacle detection (meters)
+    obstacle_distance_threshold: 0.35
+    # Front arc to scan for obstacles (degrees, each side)
+    front_arc_degrees: 30.0
+
+navigation_controller_node:
+  ros__parameters:
+    # Duration to stop when obstacle is detected (seconds)
+    stop_duration: 1.0
+    # Angular velocity for turning (rad/s)
+    turn_speed: 0.5
+    # Duration to turn ~90 degrees at turn_speed (seconds)
+    turn_duration_90: 3.0
+    # Forward speed during obstacle bypass (m/s)
+    forward_speed: 0.15
+    # Duration to drive forward beside obstacle — step 1 (seconds)
+    bypass_forward_duration_1: 2.0
+    # Duration to drive forward past obstacle — step 2 (seconds)
+    bypass_forward_duration_2: 3.5
+    # Speed while searching for line after bypass (m/s)
+    return_speed: 0.10
+    # Timeout for returning to line before forced resume (seconds)
+    return_timeout: 10.0

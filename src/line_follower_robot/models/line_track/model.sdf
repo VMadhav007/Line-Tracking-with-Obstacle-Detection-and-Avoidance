@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="line_track">
+    <static>true</static>
+    <link name="track_link">
+
+      <!--
+        OVAL TRACK LAYOUT:
+        The track is an oval loop ~4m x 2.5m, made of:
+        - 2 straight segments (top and bottom, along X axis)
+        - Arc segments on left and right sides (approximated with small straight pieces)
+        Line width: 0.15m, line color: black (0,0,0)
+        Slightly raised above ground (z=0.001) to be visible
+
+        Track center is at origin (0,0).
+        Top straight:    y = +1.0,  x from -1.5 to +1.5
+        Bottom straight: y = -1.0,  x from -1.5 to +1.5
+        Left arc:  center (-1.5, 0), radius 1.0
+        Right arc: center (+1.5, 0), radius 1.0
+      -->
+
+      <!-- ========== TOP STRAIGHT SEGMENT ========== -->
+      <visual name="top_straight">
+        <pose>0 1.0 0.001 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>3.0 0.15 0.002</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0 0 0 1</ambient>
+          <diffuse>0 0 0 1</diffuse>
+          <specular>0 0 0 1</specular>
+        </material>
+      </visual>
+
+      <!-- ========== BOTTOM STRAIGHT SEGMENT ========== -->
+      <visual name="bottom_straight">
+        <pose>0 -1.0 0.001 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>3.0 0.15 0.002</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0 0 0 1</ambient>
+          <diffuse>0 0 0 1</diffuse>
+          <specular>0 0 0 1</specular>
+        </material>
+      </visual>
+
+      <!-- ========== RIGHT ARC (12 segments, center at x=1.5, y=0, radius=1.0) ========== -->
+      <!-- Segment 0: angle = -90 deg -->
+      <visual name="right_arc_0">
+        <pose>1.5 -1.0 0.001 0 0 -1.3090</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <!-- Segment 1: angle = -60 deg -->
+      <visual name="right_arc_1">
+        <pose>1.933 -0.75 0.001 0 0 -1.0472</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <!-- Segment 2: angle = -30 deg -->
+      <visual name="right_arc_2">
+        <pose>2.183 -0.25 0.001 0 0 -0.5236</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <!-- Segment 3: angle = 0 deg -->
+      <visual name="right_arc_3">
+        <pose>2.25 0.25 0.001 0 0 0.0</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <!-- Segment 4: angle = 30 deg -->
+      <visual name="right_arc_4">
+        <pose>2.183 0.25 0.001 0 0 0.5236</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <!-- Segment 5: angle = 60 deg -->
+      <visual name="right_arc_5">
+        <pose>1.933 0.75 0.001 0 0 1.0472</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+
+      <!-- ========== LEFT ARC (6 segments, center at x=-1.5, y=0, radius=1.0) ========== -->
+      <!-- Segment 0: angle = 90 deg -->
+      <visual name="left_arc_0">
+        <pose>-1.5 1.0 0.001 0 0 1.3090</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <!-- Segment 1: angle = 120 deg -->
+      <visual name="left_arc_1">
+        <pose>-1.933 0.75 0.001 0 0 2.0944</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <!-- Segment 2: angle = 150 deg -->
+      <visual name="left_arc_2">
+        <pose>-2.183 0.25 0.001 0 0 2.6180</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <!-- Segment 3: angle = 180 deg -->
+      <visual name="left_arc_3">
+        <pose>-2.25 -0.25 0.001 0 0 3.14159</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <!-- Segment 4: angle = 210 deg -->
+      <visual name="left_arc_4">
+        <pose>-2.183 -0.25 0.001 0 0 -2.6180</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <!-- Segment 5: angle = 240 deg -->
+      <visual name="left_arc_5">
+        <pose>-1.933 -0.75 0.001 0 0 -2.0944</pose>
+        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+
+    </link>
+  </model>
+</sdf>

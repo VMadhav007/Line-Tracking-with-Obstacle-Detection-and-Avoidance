@@ -1,0 +1,42 @@
+[0.538s] Invoking command in '/home/pes1ug23cs679/mars_anti/build/line_follower_robot': PYTHONPATH=/home/pes1ug23cs679/mars_anti/build/line_follower_robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/pes1ug23cs679/mars_anti/build/line_follower_robot/build --no-deps symlink_data
+[0.766s] running develop
+[0.940s] running egg_info
+[0.940s] creating line_follower_robot.egg-info
+[0.940s] writing line_follower_robot.egg-info/PKG-INFO
+[0.940s] writing dependency_links to line_follower_robot.egg-info/dependency_links.txt
+[0.940s] writing entry points to line_follower_robot.egg-info/entry_points.txt
+[0.940s] writing requirements to line_follower_robot.egg-info/requires.txt
+[0.941s] writing top-level names to line_follower_robot.egg-info/top_level.txt
+[0.941s] writing manifest file 'line_follower_robot.egg-info/SOURCES.txt'
+[0.942s] reading manifest file 'line_follower_robot.egg-info/SOURCES.txt'
+[0.942s] writing manifest file 'line_follower_robot.egg-info/SOURCES.txt'
+[0.943s] running build_ext
+[0.944s] Creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/python3.10/site-packages/line-follower-robot.egg-link (link to .)
+[0.944s] Installing line_tracker_node script to /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/line_follower_robot
+[0.944s] Installing navigation_controller_node script to /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/line_follower_robot
+[0.945s] Installing obstacle_detector_node script to /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/line_follower_robot
+[0.945s] 
+[0.945s] Installed /home/pes1ug23cs679/mars_anti/build/line_follower_robot
+[0.945s] running symlink_data
+[0.945s] creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/ament_index
+[0.945s] creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/ament_index/resource_index
+[0.945s] creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/ament_index/resource_index/packages
+[0.945s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/resource/line_follower_robot -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/ament_index/resource_index/packages
+[0.945s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/package.xml -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot
+[0.945s] creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/launch
+[0.945s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/launch/line_follower.launch.py -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/launch
+[0.945s] creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/config
+[0.945s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/config/params.yaml -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/config
+[0.945s] creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/worlds
+[0.945s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/worlds/line_track_world.world -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/worlds
+[0.945s] creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models
+[0.946s] creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/line_track
+[0.946s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/line_track/model.sdf -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/line_track
+[0.946s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/line_track/model.config -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/line_track
+[0.946s] creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/obstacle_box
+[0.946s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/obstacle_box/model.sdf -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/obstacle_box
+[0.946s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/obstacle_box/model.config -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/obstacle_box
+[0.946s] creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/turtlebot3_waffle_cam
+[0.946s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/turtlebot3_waffle_cam/model.sdf -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/turtlebot3_waffle_cam
+[0.946s] symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/turtlebot3_waffle_cam/model.config -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/turtlebot3_waffle_cam
+[0.965s] Invoked command in '/home/pes1ug23cs679/mars_anti/build/line_follower_robot' returned '0': PYTHONPATH=/home/pes1ug23cs679/mars_anti/build/line_follower_robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/pes1ug23cs679/mars_anti/build/line_follower_robot/build --no-deps symlink_data

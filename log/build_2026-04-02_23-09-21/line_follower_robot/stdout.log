@@ -1,0 +1,40 @@
+running develop
+running egg_info
+creating line_follower_robot.egg-info
+writing line_follower_robot.egg-info/PKG-INFO
+writing dependency_links to line_follower_robot.egg-info/dependency_links.txt
+writing entry points to line_follower_robot.egg-info/entry_points.txt
+writing requirements to line_follower_robot.egg-info/requires.txt
+writing top-level names to line_follower_robot.egg-info/top_level.txt
+writing manifest file 'line_follower_robot.egg-info/SOURCES.txt'
+reading manifest file 'line_follower_robot.egg-info/SOURCES.txt'
+writing manifest file 'line_follower_robot.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/python3.10/site-packages/line-follower-robot.egg-link (link to .)
+Installing line_tracker_node script to /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/line_follower_robot
+Installing navigation_controller_node script to /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/line_follower_robot
+Installing obstacle_detector_node script to /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/line_follower_robot
+
+Installed /home/pes1ug23cs679/mars_anti/build/line_follower_robot
+running symlink_data
+creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/ament_index
+creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/ament_index/resource_index
+creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/ament_index/resource_index/packages
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/resource/line_follower_robot -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/ament_index/resource_index/packages
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/package.xml -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot
+creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/launch
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/launch/line_follower.launch.py -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/launch
+creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/config
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/config/params.yaml -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/config
+creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/worlds
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/worlds/line_track_world.world -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/worlds
+creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models
+creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/line_track
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/line_track/model.sdf -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/line_track
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/line_track/model.config -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/line_track
+creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/obstacle_box
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/obstacle_box/model.sdf -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/obstacle_box
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/obstacle_box/model.config -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/obstacle_box
+creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/turtlebot3_waffle_cam
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/turtlebot3_waffle_cam/model.sdf -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/turtlebot3_waffle_cam
+symbolically linking /home/pes1ug23cs679/mars_anti/build/line_follower_robot/models/turtlebot3_waffle_cam/model.config -> /home/pes1ug23cs679/mars_anti/install/line_follower_robot/share/line_follower_robot/models/turtlebot3_waffle_cam
