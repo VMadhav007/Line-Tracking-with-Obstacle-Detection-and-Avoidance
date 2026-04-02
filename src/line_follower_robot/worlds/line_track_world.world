@@ -74,24 +74,24 @@
       </link>
     </model>
 
-    <!-- === LINE TRACK (oval loop) === -->
+    <!-- === INFINITY (∞) LINE TRACK === -->
     <include>
       <uri>model://line_track</uri>
       <pose>0 0 0 0 0 0</pose>
     </include>
 
-    <!-- === OBSTACLE 1: On the top straight segment === -->
+    <!-- === OBSTACLE 1: On the right loop of the infinity === -->
     <include>
       <uri>model://obstacle_box</uri>
       <name>obstacle_1</name>
-      <pose>0.5 1.0 0.1 0 0 0</pose>
+      <pose>1.5 0.5 0.1 0 0 0</pose>
     </include>
 
-    <!-- === OBSTACLE 2: On the bottom straight segment === -->
+    <!-- === OBSTACLE 2: On the left loop of the infinity === -->
     <include>
       <uri>model://obstacle_box</uri>
       <name>obstacle_2</name>
-      <pose>-0.5 -1.0 0.1 0 0 0</pose>
+      <pose>-1.5 -0.5 0.1 0 0 0</pose>
     </include>
 
     <!-- === SCENE SETTINGS === -->
@@ -101,10 +101,10 @@
       <background>0.7 0.8 0.9 1</background>
     </scene>
 
-    <!-- === GUI CAMERA === -->
+    <!-- === GUI CAMERA (top-down view of infinity track) === -->
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>0 -5 8 0 0.9 1.57</pose>
+        <pose>0 0 8 0 1.5708 0</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>

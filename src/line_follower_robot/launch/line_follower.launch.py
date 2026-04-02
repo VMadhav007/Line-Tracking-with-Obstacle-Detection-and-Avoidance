@@ -101,10 +101,10 @@ def generate_launch_description():
             arguments=[
                 '-entity', 'turtlebot3_waffle',
                 '-file', sdf_file,
-                '-x', '-1.0',
-                '-y', '1.0',
+                '-x', '2.0',
+                '-y', '0.0',
                 '-z', '0.01',
-                '-Y', '0.0',
+                '-Y', '3.14159',  # facing left along the infinity track
             ],
         ),
 

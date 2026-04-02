@@ -1,0 +1,19 @@
+[0.688s] Invoking command in '/home/pes1ug23cs679/mars_anti/build/line_follower_robot': PYTHONPATH=/home/pes1ug23cs679/mars_anti/build/line_follower_robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/pes1ug23cs679/mars_anti/build/line_follower_robot/build --no-deps symlink_data
+[0.990s] running develop
+[1.195s] running egg_info
+[1.195s] writing line_follower_robot.egg-info/PKG-INFO
+[1.201s] writing dependency_links to line_follower_robot.egg-info/dependency_links.txt
+[1.201s] writing entry points to line_follower_robot.egg-info/entry_points.txt
+[1.201s] writing requirements to line_follower_robot.egg-info/requires.txt
+[1.201s] writing top-level names to line_follower_robot.egg-info/top_level.txt
+[1.204s] reading manifest file 'line_follower_robot.egg-info/SOURCES.txt'
+[1.205s] writing manifest file 'line_follower_robot.egg-info/SOURCES.txt'
+[1.206s] running build_ext
+[1.207s] Creating /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/python3.10/site-packages/line-follower-robot.egg-link (link to .)
+[1.208s] Installing line_tracker_node script to /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/line_follower_robot
+[1.208s] Installing navigation_controller_node script to /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/line_follower_robot
+[1.208s] Installing obstacle_detector_node script to /home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/line_follower_robot
+[1.208s] 
+[1.208s] Installed /home/pes1ug23cs679/mars_anti/build/line_follower_robot
+[1.208s] running symlink_data
+[1.239s] Invoked command in '/home/pes1ug23cs679/mars_anti/build/line_follower_robot' returned '0': PYTHONPATH=/home/pes1ug23cs679/mars_anti/build/line_follower_robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pes1ug23cs679/mars_anti/install/line_follower_robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/pes1ug23cs679/mars_anti/build/line_follower_robot/build --no-deps symlink_data

@@ -44,26 +44,35 @@ line_tracker_node:
 
 obstacle_detector_node:
   ros__parameters:
-    # Distance threshold for obstacle detection (meters)
-    obstacle_distance_threshold: 0.35
-    # Front arc to scan for obstacles (degrees, each side)
-    front_arc_degrees: 30.0
+    # Detect obstacles at this distance (meters) — triggers avoidance
+    obstacle_distance_threshold: 0.50
+    # Emergency stop distance — critically close
+    emergency_distance_threshold: 0.25
+    # Front arc to scan (degrees, each side from center)
+    front_arc_degrees: 40.0
+    # Side arc for clearance checking during bypass
+    side_check_arc_degrees: 90.0
 
 navigation_controller_node:
   ros__parameters:
-    # Duration to stop when obstacle is detected (seconds)
-    stop_duration: 1.0
-    # Angular velocity for turning (rad/s)
-    turn_speed: 0.5
-    # Duration to turn ~90 degrees at turn_speed (seconds)
-    turn_duration_90: 3.0
-    # Forward speed during obstacle bypass (m/s)
+    # Brief stop before starting avoidance (seconds)
+    stop_duration: 0.5
+    # Turn speed for avoidance maneuver (rad/s)
+    turn_speed: 0.6
+    # Time to turn ~90° at turn_speed (tune this!)
+    turn_duration_90: 2.5
+    # Forward speed during bypass
     forward_speed: 0.15
-    # Duration to drive forward beside obstacle — step 1 (seconds)
-    bypass_forward_duration_1: 2.0
-    # Duration to drive forward past obstacle — step 2 (seconds)
-    bypass_forward_duration_2: 3.5
-    # Speed while searching for line after bypass (m/s)
-    return_speed: 0.10
-    # Timeout for returning to line before forced resume (seconds)
-    return_timeout: 10.0
+    # Drive forward to clear beside obstacle (seconds)
+    bypass_forward_duration: 1.5
+    # Drive forward past the obstacle (seconds)
+    approach_line_duration: 2.5
+    # Speed when searching for line after bypass
+    return_speed: 0.12
+    # Give up searching after this long
+    return_timeout: 8.0
+    # Start slowing down at this distance (meters)
+    slowdown_distance: 0.60
+    # Reduced speed when approaching obstacle
+    slowdown_speed: 0.08
+

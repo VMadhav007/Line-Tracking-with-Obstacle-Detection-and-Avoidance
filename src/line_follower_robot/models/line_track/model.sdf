@@ -5,123 +5,211 @@
     <link name="track_link">
 
       <!--
-        OVAL TRACK LAYOUT:
-        The track is an oval loop ~4m x 2.5m, made of:
-        - 2 straight segments (top and bottom, along X axis)
-        - Arc segments on left and right sides (approximated with small straight pieces)
-        Line width: 0.15m, line color: black (0,0,0)
-        Slightly raised above ground (z=0.001) to be visible
-
-        Track center is at origin (0,0).
-        Top straight:    y = +1.0,  x from -1.5 to +1.5
-        Bottom straight: y = -1.0,  x from -1.5 to +1.5
-        Left arc:  center (-1.5, 0), radius 1.0
-        Right arc: center (+1.5, 0), radius 1.0
+        INFINITY (∞) TRACK — Lemniscate of Bernoulli
+        Scale: ~4m wide x ~1.4m tall
+        40 segments approximating the figure-8 curve
+        Line width: 0.15m, color: black
+        The track crosses itself at the center (origin)
       -->
 
-      <!-- ========== TOP STRAIGHT SEGMENT ========== -->
-      <visual name="top_straight">
-        <pose>0 1.0 0.001 0 0 0</pose>
-        <geometry>
-          <box>
-            <size>3.0 0.15 0.002</size>
-          </box>
-        </geometry>
-        <material>
-          <ambient>0 0 0 1</ambient>
-          <diffuse>0 0 0 1</diffuse>
-          <specular>0 0 0 1</specular>
-        </material>
-      </visual>
-
-      <!-- ========== BOTTOM STRAIGHT SEGMENT ========== -->
-      <visual name="bottom_straight">
-        <pose>0 -1.0 0.001 0 0 0</pose>
-        <geometry>
-          <box>
-            <size>3.0 0.15 0.002</size>
-          </box>
-        </geometry>
-        <material>
-          <ambient>0 0 0 1</ambient>
-          <diffuse>0 0 0 1</diffuse>
-          <specular>0 0 0 1</specular>
-        </material>
-      </visual>
-
-      <!-- ========== RIGHT ARC (12 segments, center at x=1.5, y=0, radius=1.0) ========== -->
-      <!-- Segment 0: angle = -90 deg -->
-      <visual name="right_arc_0">
-        <pose>1.5 -1.0 0.001 0 0 -1.3090</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_0">
+        <pose>1.9641 0.1508 0.001 0 0 1.8045</pose>
+        <geometry><box><size>0.3566 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-      <!-- Segment 1: angle = -60 deg -->
-      <visual name="right_arc_1">
-        <pose>1.933 -0.75 0.001 0 0 -1.0472</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_1">
+        <pose>1.8323 0.4191 0.001 0 0 2.2557</pose>
+        <geometry><box><size>0.3488 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-      <!-- Segment 2: angle = -30 deg -->
-      <visual name="right_arc_2">
-        <pose>2.183 -0.25 0.001 0 0 -0.5236</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_2">
+        <pose>1.6069 0.6037 0.001 0 0 2.6632</pose>
+        <geometry><box><size>0.3353 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-      <!-- Segment 3: angle = 0 deg -->
-      <visual name="right_arc_3">
-        <pose>2.25 0.25 0.001 0 0 0.0</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_3">
+        <pose>1.3400 0.6888 0.001 0 0 3.0111</pose>
+        <geometry><box><size>0.3189 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-      <!-- Segment 4: angle = 30 deg -->
-      <visual name="right_arc_4">
-        <pose>2.183 0.25 0.001 0 0 0.5236</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_4">
+        <pose>1.0727 0.6868 0.001 0 0 -2.9881</pose>
+        <geometry><box><size>0.3023 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-      <!-- Segment 5: angle = 60 deg -->
-      <visual name="right_arc_5">
-        <pose>1.933 0.75 0.001 0 0 1.0472</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_5">
+        <pose>0.8267 0.6207 0.001 0 0 -2.7651</pose>
+        <geometry><box><size>0.2872 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-
-      <!-- ========== LEFT ARC (6 segments, center at x=-1.5, y=0, radius=1.0) ========== -->
-      <!-- Segment 0: angle = 90 deg -->
-      <visual name="left_arc_0">
-        <pose>-1.5 1.0 0.001 0 0 1.3090</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_6">
+        <pose>0.6083 0.5129 0.001 0 0 -2.5968</pose>
+        <geometry><box><size>0.2748 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-      <!-- Segment 1: angle = 120 deg -->
-      <visual name="left_arc_1">
-        <pose>-1.933 0.75 0.001 0 0 2.0944</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_7">
+        <pose>0.4153 0.3798 0.001 0 0 -2.4769</pose>
+        <geometry><box><size>0.2654 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-      <!-- Segment 2: angle = 150 deg -->
-      <visual name="left_arc_2">
-        <pose>-2.183 0.25 0.001 0 0 2.6180</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_8">
+        <pose>0.2414 0.2325 0.001 0 0 -2.3999</pose>
+        <geometry><box><size>0.2591 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-      <!-- Segment 3: angle = 180 deg -->
-      <visual name="left_arc_3">
-        <pose>-2.25 -0.25 0.001 0 0 3.14159</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_9">
+        <pose>0.0792 0.0782 0.001 0 0 -2.3624</pose>
+        <geometry><box><size>0.2560 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-      <!-- Segment 4: angle = 210 deg -->
-      <visual name="left_arc_4">
-        <pose>-2.183 -0.25 0.001 0 0 -2.6180</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_10">
+        <pose>-0.0792 -0.0782 0.001 0 0 -2.3624</pose>
+        <geometry><box><size>0.2560 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
-      <!-- Segment 5: angle = 240 deg -->
-      <visual name="left_arc_5">
-        <pose>-1.933 -0.75 0.001 0 0 -2.0944</pose>
-        <geometry><box><size>0.53 0.15 0.002</size></box></geometry>
+      <visual name="seg_11">
+        <pose>-0.2414 -0.2325 0.001 0 0 -2.3999</pose>
+        <geometry><box><size>0.2591 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_12">
+        <pose>-0.4153 -0.3798 0.001 0 0 -2.4769</pose>
+        <geometry><box><size>0.2654 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_13">
+        <pose>-0.6083 -0.5129 0.001 0 0 -2.5968</pose>
+        <geometry><box><size>0.2748 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_14">
+        <pose>-0.8267 -0.6207 0.001 0 0 -2.7651</pose>
+        <geometry><box><size>0.2872 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_15">
+        <pose>-1.0727 -0.6868 0.001 0 0 -2.9881</pose>
+        <geometry><box><size>0.3023 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_16">
+        <pose>-1.3400 -0.6888 0.001 0 0 3.0111</pose>
+        <geometry><box><size>0.3189 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_17">
+        <pose>-1.6069 -0.6037 0.001 0 0 2.6632</pose>
+        <geometry><box><size>0.3353 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_18">
+        <pose>-1.8323 -0.4191 0.001 0 0 2.2557</pose>
+        <geometry><box><size>0.3488 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_19">
+        <pose>-1.9641 -0.1508 0.001 0 0 1.8045</pose>
+        <geometry><box><size>0.3566 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_20">
+        <pose>-1.9641 0.1508 0.001 0 0 1.3371</pose>
+        <geometry><box><size>0.3566 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_21">
+        <pose>-1.8323 0.4191 0.001 0 0 0.8859</pose>
+        <geometry><box><size>0.3488 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_22">
+        <pose>-1.6069 0.6037 0.001 0 0 0.4784</pose>
+        <geometry><box><size>0.3353 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_23">
+        <pose>-1.3400 0.6888 0.001 0 0 0.1305</pose>
+        <geometry><box><size>0.3189 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_24">
+        <pose>-1.0727 0.6868 0.001 0 0 -0.1535</pose>
+        <geometry><box><size>0.3023 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_25">
+        <pose>-0.8267 0.6207 0.001 0 0 -0.3765</pose>
+        <geometry><box><size>0.2872 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_26">
+        <pose>-0.6083 0.5129 0.001 0 0 -0.5448</pose>
+        <geometry><box><size>0.2748 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_27">
+        <pose>-0.4153 0.3798 0.001 0 0 -0.6647</pose>
+        <geometry><box><size>0.2654 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_28">
+        <pose>-0.2414 0.2325 0.001 0 0 -0.7417</pose>
+        <geometry><box><size>0.2591 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_29">
+        <pose>-0.0792 0.0782 0.001 0 0 -0.7792</pose>
+        <geometry><box><size>0.2560 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_30">
+        <pose>0.0792 -0.0782 0.001 0 0 -0.7792</pose>
+        <geometry><box><size>0.2560 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_31">
+        <pose>0.2414 -0.2325 0.001 0 0 -0.7417</pose>
+        <geometry><box><size>0.2591 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_32">
+        <pose>0.4153 -0.3798 0.001 0 0 -0.6647</pose>
+        <geometry><box><size>0.2654 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_33">
+        <pose>0.6083 -0.5129 0.001 0 0 -0.5448</pose>
+        <geometry><box><size>0.2748 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_34">
+        <pose>0.8267 -0.6207 0.001 0 0 -0.3765</pose>
+        <geometry><box><size>0.2872 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_35">
+        <pose>1.0727 -0.6868 0.001 0 0 -0.1535</pose>
+        <geometry><box><size>0.3023 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_36">
+        <pose>1.3400 -0.6888 0.001 0 0 0.1305</pose>
+        <geometry><box><size>0.3189 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_37">
+        <pose>1.6069 -0.6037 0.001 0 0 0.4784</pose>
+        <geometry><box><size>0.3353 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_38">
+        <pose>1.8323 -0.4191 0.001 0 0 0.8859</pose>
+        <geometry><box><size>0.3488 0.15 0.002</size></box></geometry>
+        <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+      </visual>
+      <visual name="seg_39">
+        <pose>1.9641 -0.1508 0.001 0 0 1.3371</pose>
+        <geometry><box><size>0.3566 0.15 0.002</size></box></geometry>
         <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
       </visual>
 
