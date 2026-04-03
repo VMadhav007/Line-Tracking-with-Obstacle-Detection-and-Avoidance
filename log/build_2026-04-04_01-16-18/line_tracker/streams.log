@@ -1,0 +1,24 @@
+[0.560s] Invoking command in '/home/pes1ug23cs679/mars_anti2/src/line_tracker': PYTHONPATH=/home/pes1ug23cs679/mars_anti2/build/line_tracker/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/line_tracker build --build-base /home/pes1ug23cs679/mars_anti2/build/line_tracker/build install --record /home/pes1ug23cs679/mars_anti2/build/line_tracker/install.log --single-version-externally-managed install_data
+[0.772s] running egg_info
+[0.773s] writing ../../build/line_tracker/line_tracker.egg-info/PKG-INFO
+[0.773s] writing dependency_links to ../../build/line_tracker/line_tracker.egg-info/dependency_links.txt
+[0.773s] writing entry points to ../../build/line_tracker/line_tracker.egg-info/entry_points.txt
+[0.773s] writing requirements to ../../build/line_tracker/line_tracker.egg-info/requires.txt
+[0.773s] writing top-level names to ../../build/line_tracker/line_tracker.egg-info/top_level.txt
+[0.775s] reading manifest file '../../build/line_tracker/line_tracker.egg-info/SOURCES.txt'
+[0.775s] writing manifest file '../../build/line_tracker/line_tracker.egg-info/SOURCES.txt'
+[0.775s] running build
+[0.775s] running build_py
+[0.776s] running install
+[0.776s] running install_lib
+[0.777s] running install_data
+[0.777s] copying urdf/turtlebot3_burger.urdf -> /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/line_tracker/urdf
+[0.778s] running install_egg_info
+[0.779s] removing '/home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/python3.10/site-packages/line_tracker-1.0.0-py3.10.egg-info' (and everything under it)
+[0.779s] Copying ../../build/line_tracker/line_tracker.egg-info to /home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/python3.10/site-packages/line_tracker-1.0.0-py3.10.egg-info
+[0.780s] running install_scripts
+[0.796s] Installing controller script to /home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/line_tracker
+[0.796s] Installing line_detector script to /home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/line_tracker
+[0.796s] Installing obstacle_detector script to /home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/line_tracker
+[0.796s] writing list of installed files to '/home/pes1ug23cs679/mars_anti2/build/line_tracker/install.log'
+[0.814s] Invoked command in '/home/pes1ug23cs679/mars_anti2/src/line_tracker' returned '0': PYTHONPATH=/home/pes1ug23cs679/mars_anti2/build/line_tracker/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/line_tracker build --build-base /home/pes1ug23cs679/mars_anti2/build/line_tracker/build install --record /home/pes1ug23cs679/mars_anti2/build/line_tracker/install.log --single-version-externally-managed install_data

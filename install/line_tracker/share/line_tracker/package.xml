@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>line_tracker</name>
+  <version>1.0.0</version>
+  <description>
+    Autonomous line-tracking robot with LIDAR-based obstacle avoidance.
+    Uses OpenCV HSV thresholding for line detection, PID control for
+    smooth line following, and a Bug0 FSM for obstacle avoidance.
+    Tested with ROS 2 Humble + Gazebo Classic on Ubuntu 22.04.
+  </description>
+  <maintainer email="student@university.edu">Student</maintainer>
+  <license>MIT</license>
+
+  <!-- Build tool -->
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <!-- Runtime dependencies -->
+  <depend>rclpy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>cv_bridge</depend>
+
+  <!-- Test dependencies -->
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

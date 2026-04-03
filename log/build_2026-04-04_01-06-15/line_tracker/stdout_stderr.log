@@ -1,0 +1,32 @@
+running develop
+running egg_info
+creating line_tracker.egg-info
+writing line_tracker.egg-info/PKG-INFO
+writing dependency_links to line_tracker.egg-info/dependency_links.txt
+writing entry points to line_tracker.egg-info/entry_points.txt
+writing requirements to line_tracker.egg-info/requires.txt
+writing top-level names to line_tracker.egg-info/top_level.txt
+writing manifest file 'line_tracker.egg-info/SOURCES.txt'
+reading manifest file 'line_tracker.egg-info/SOURCES.txt'
+writing manifest file 'line_tracker.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/python3.10/site-packages/line-tracker.egg-link (link to .)
+Installing controller script to /home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/line_tracker
+Installing line_detector script to /home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/line_tracker
+Installing obstacle_detector script to /home/pes1ug23cs679/mars_anti2/install/line_tracker/lib/line_tracker
+
+Installed /home/pes1ug23cs679/mars_anti2/build/line_tracker
+running symlink_data
+creating /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/ament_index
+creating /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/ament_index/resource_index
+creating /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/ament_index/resource_index/packages
+symbolically linking /home/pes1ug23cs679/mars_anti2/build/line_tracker/resource/line_tracker -> /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/ament_index/resource_index/packages
+symbolically linking /home/pes1ug23cs679/mars_anti2/build/line_tracker/package.xml -> /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/line_tracker
+creating /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/line_tracker/launch
+symbolically linking /home/pes1ug23cs679/mars_anti2/build/line_tracker/launch/simulation.launch.py -> /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/line_tracker/launch
+creating /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/line_tracker/worlds
+symbolically linking /home/pes1ug23cs679/mars_anti2/build/line_tracker/worlds/line_world.world -> /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/line_tracker/worlds
+creating /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/line_tracker/urdf
+symbolically linking /home/pes1ug23cs679/mars_anti2/build/line_tracker/urdf/turtlebot3_burger.urdf -> /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/line_tracker/urdf
+creating /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/line_tracker/config
+symbolically linking /home/pes1ug23cs679/mars_anti2/build/line_tracker/config/rviz_config.rviz -> /home/pes1ug23cs679/mars_anti2/install/line_tracker/share/line_tracker/config
