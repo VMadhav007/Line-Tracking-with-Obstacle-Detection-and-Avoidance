@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 """
-Obstacle Detector Node
-----------------------
-Subscribes to /scan (sensor_msgs/LaserScan) and publishes a Bool on
-/obstacle_flag.  Checks the front ±30° arc (60° total) for any reading
-below the configurable threshold.
-
-NaN / Inf / out-of-range values are discarded.
+obstacle_detector.py
+Subscribes to /scan (LaserScan).
+Publishes /obstacle_flag (Bool) — True if obstacle within threshold.
 """
-import math
+
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
@@ -16,53 +12,56 @@ from std_msgs.msg import Bool
 
 
 class ObstacleDetector(Node):
+
     def __init__(self):
         super().__init__('obstacle_detector')
 
-        self.declare_parameter('threshold', 0.5)       # metres
-        self.declare_parameter('front_half_angle', 30.0)  # degrees each side
+        # --- Parameters (easy to tune) ---
+        self.declare_parameter('threshold_m',     0.5)   # stop distance in metres
+        self.declare_parameter('front_angle_deg', 30)    # half-width of front arc
 
-        self.threshold = self.get_parameter('threshold').value
-        self.half_deg = self.get_parameter('front_half_angle').value
+        self.threshold  = self.get_parameter('threshold_m').value
+        self.half_angle = self.get_parameter('front_angle_deg').value
 
+        # --- ROS interfaces ---
         self.sub = self.create_subscription(
             LaserScan, '/scan', self.scan_callback, 10)
+
         self.pub = self.create_publisher(Bool, '/obstacle_flag', 10)
 
         self.get_logger().info(
-            f'Obstacle Detector started — threshold={self.threshold} m, '
-            f'arc=±{self.half_deg}°')
+            f'ObstacleDetector ready | threshold={self.threshold}m '
+            f'| front arc=\u00b1{self.half_angle}\u00b0')
 
-    # ------------------------------------------------------------------
     def scan_callback(self, msg: LaserScan):
-        n = len(msg.ranges)
-        if n == 0:
-            return
+        ranges = msg.ranges
+        n      = len(ranges)          # usually 360
 
-        # Convert ±half_deg to number of indices
-        angle_increment = msg.angle_increment  # rad per index
-        half_idx = int(math.radians(self.half_deg) / angle_increment)
+        # Build front arc indices
+        arc_size  = self.half_angle   # e.g. 30
+        front_idx = (list(range(n - arc_size, n)) +
+                     list(range(0, arc_size + 1)))
 
-        # Front arc: indices near 0 and near n
-        front_indices = (
-            list(range(0, half_idx + 1)) +
-            list(range(max(0, n - half_idx), n))
-        )
+        # Filter NaN / inf / out-of-range readings
+        valid = [
+            ranges[i]
+            for i in front_idx
+            if i < n and
+               ranges[i] == ranges[i] and           # not NaN
+               0.01 < ranges[i] < msg.range_max     # valid range
+        ]
 
-        obstacle = False
-        for i in front_indices:
-            r = msg.ranges[i]
-            if math.isnan(r) or math.isinf(r):
-                continue
-            if r < msg.range_min or r > msg.range_max:
-                continue
-            if r < self.threshold:
-                obstacle = True
-                break
+        # Detect obstacle
+        obstacle  = bool(valid) and any(r < self.threshold for r in valid)
 
-        flag = Bool()
+        flag      = Bool()
         flag.data = obstacle
         self.pub.publish(flag)
+
+        if obstacle:
+            min_dist = min(valid)
+            self.get_logger().debug(
+                f'OBSTACLE detected | closest={min_dist:.2f}m')
 
 
 def main(args=None):

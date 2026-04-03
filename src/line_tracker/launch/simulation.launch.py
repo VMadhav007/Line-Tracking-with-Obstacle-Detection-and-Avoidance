@@ -96,8 +96,8 @@ def generate_launch_description():
                 output='screen',
                 parameters=[{
                     'use_sim_time': True,
-                    'threshold': 0.5,
-                    'front_half_angle': 30.0,
+                    'threshold_m': 0.5,
+                    'front_angle_deg': 30,
                 }],
             ),
         ],

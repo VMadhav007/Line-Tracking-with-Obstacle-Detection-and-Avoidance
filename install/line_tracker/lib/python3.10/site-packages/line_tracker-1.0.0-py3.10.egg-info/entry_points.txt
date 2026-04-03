@@ -1,5 +1,0 @@
-[console_scripts]
-controller = line_tracker.controller:main
-line_detector = line_tracker.line_detector:main
-obstacle_detector = line_tracker.obstacle_detector:main
-
