@@ -1,26 +1,20 @@
 #!/usr/bin/env python3
 """
-controller.py  —  FSM with committed rectangular bypass
-=========================================================
+controller.py  —  FSM with committed rectangular bypass + cooldown
+===================================================================
 States:
-  FOLLOW_LINE       : PID line tracking (UNTOUCHED)
+  FOLLOW_LINE       : PID line tracking
   OBSTACLE_DETECTED : immediate stop + pick turn direction
   AVOID_OBSTACLE    : 4-phase committed bypass maneuver
   SEARCH_LINE       : spin BACK toward line + drive to re-acquire
 
-Geometry of the bypass (example: turning LEFT):
-
-   Line ════════╗         ════════════ Line continues
-                ║ obstacle
-   Robot →      ║
-                ║
-         ┌──────┘
-   Ph1:  │ turn left 90°
-   Ph2:  │ drive forward 0.40m (straight, no curve!)
-         └──────┐
-   Ph3:         │ turn right 90° (back toward line)
-   Ph4:         │ drive forward 0.50m
-                └──→ SEARCH_LINE (spin right + creep forward)
+Key fix: After avoidance, the robot often re-acquires the line while
+still alongside the obstacle, causing an immediate re-trigger loop.
+Solution:
+  - Phase 4 only exits early if line visible AND obstacle NOT detected
+  - SEARCH_LINE only resumes following if obstacle is NOT in front
+  - After avoidance → FOLLOW_LINE, a 3-second cooldown suppresses
+    obstacle re-triggering to let the robot drive past the obstacle
 """
 
 import math
@@ -77,8 +71,11 @@ class ControllerNode(Node):
         # Emergency collision distance
         self.emergency_dist = 0.12
 
-        # Search timeout — after this, drive forward aggressively
+        # Search timeout — after this, drive forward faster
         self.search_timeout = 6.0
+
+        # Cooldown after avoidance — suppress obstacle re-trigger
+        self.avoidance_cooldown = 3.0   # seconds
 
         # ── Internal state ────────────────────────────────────────────────────
         self.state            = FOLLOW_LINE
@@ -91,6 +88,9 @@ class ControllerNode(Node):
         self.right_min         = 9.99
 
         self.turn_sign = -1   # +1=left, -1=right
+
+        # Cooldown timer: when > current time, obstacle detection suppressed
+        self.cooldown_until = 0.0
 
         # ── Subscribers ───────────────────────────────────────────────────────
         self.create_subscription(Float32, '/line_error',
@@ -116,7 +116,8 @@ class ControllerNode(Node):
             f'fwd1={self.phase2_fwd_dur}s '
             f'turn2={self.phase3_turn_dur}s '
             f'fwd2={self.phase4_fwd_dur}s | '
-            f'fwd_spd={self.avoid_fwd_spd}m/s')
+            f'fwd_spd={self.avoid_fwd_spd}m/s | '
+            f'cooldown={self.avoidance_cooldown}s')
 
     # ── Callbacks ─────────────────────────────────────────────────────────────
 
@@ -172,18 +173,41 @@ class ControllerNode(Node):
     def line_visible(self) -> bool:
         return not math.isnan(self.line_error)
 
+    def in_cooldown(self) -> bool:
+        return time.time() < self.cooldown_until
+
+    def start_cooldown(self):
+        """Start post-avoidance cooldown to suppress obstacle re-trigger."""
+        self.cooldown_until = time.time() + self.avoidance_cooldown
+        self.get_logger().info(
+            f'Cooldown started ({self.avoidance_cooldown}s) — '
+            f'obstacle detection suppressed')
+
     # ── Control loop ──────────────────────────────────────────────────────────
 
     def control_loop(self):
         elapsed = time.time() - self.state_entry_time
 
         # ════════════════════════════════════════════════════════════════════
-        # STATE: FOLLOW_LINE — UNTOUCHED
+        # STATE: FOLLOW_LINE
+        # PID line tracking.
+        # Obstacle detection is suppressed during cooldown period.
         # ════════════════════════════════════════════════════════════════════
         if self.state == FOLLOW_LINE:
 
-            if self.obstacle_detected:
+            # Check obstacle only if NOT in cooldown
+            if self.obstacle_detected and not self.in_cooldown():
                 self.publish_vel(0.0, 0.0)
+                self.transition(OBSTACLE_DETECTED)
+                return
+
+            # During cooldown, still warn about very close obstacles
+            if self.in_cooldown() and self.obs_min_dist < 0.20:
+                self.publish_vel(0.0, 0.0)
+                self.get_logger().warn(
+                    f'Emergency during cooldown: obs at '
+                    f'{self.obs_min_dist:.2f}m → OBSTACLE_DETECTED')
+                self.cooldown_until = 0.0  # cancel cooldown
                 self.transition(OBSTACLE_DETECTED)
                 return
 
@@ -217,17 +241,8 @@ class ControllerNode(Node):
 
         # ════════════════════════════════════════════════════════════════════
         # STATE: AVOID_OBSTACLE
-        # 4-phase COMMITTED rectangular bypass:
-        #
-        #   Phase 1: Turn ~90° AWAY from obstacle (pure rotation)
-        #   Phase 2: Drive STRAIGHT forward alongside obstacle
-        #            (0.20 m/s × 2.0s = 0.40m — NO curve!)
-        #   Phase 3: Turn ~90° BACK toward line (pure rotation)
-        #   Phase 4: Drive STRAIGHT forward past obstacle toward line
-        #            (0.20 m/s × 2.5s = 0.50m). Exit early if line found.
-        #
-        # Bypass is COMMITTED — no obstacle re-trigger except
-        # emergency collision (< 0.12m).
+        # 4-phase COMMITTED rectangular bypass.
+        # Phase 4 only exits early if line visible AND obstacle clear.
         # ════════════════════════════════════════════════════════════════════
         elif self.state == AVOID_OBSTACLE:
 
@@ -254,7 +269,6 @@ class ControllerNode(Node):
 
             elif t < p2_end:
                 # ── Phase 2: Drive STRAIGHT forward ───────────────────────
-                # No curve! Pure forward motion to maintain heading.
                 self.publish_vel(self.avoid_fwd_spd, 0.0)
 
             elif t < p3_end:
@@ -263,11 +277,15 @@ class ControllerNode(Node):
 
             elif t < p4_end:
                 # ── Phase 4: Drive STRAIGHT toward line ───────────────────
-                # If line is visible, exit early to follow it
-                if self.line_visible():
+                # Only exit early if line visible AND obstacle is CLEAR
+                if (self.line_visible() and
+                        not self.obstacle_detected and
+                        self.obs_min_dist > self.obs_threshold):
                     self.get_logger().info(
-                        f'Line found during phase 4 '
-                        f'(error={self.line_error:.0f}px) → FOLLOW_LINE')
+                        f'Line found + obstacle clear in phase 4 '
+                        f'(error={self.line_error:.0f}px, '
+                        f'obs={self.obs_min_dist:.2f}m) → FOLLOW_LINE')
+                    self.start_cooldown()
                     self.transition(FOLLOW_LINE)
                     return
                 self.publish_vel(self.avoid_fwd_spd, 0.0)
@@ -280,18 +298,13 @@ class ControllerNode(Node):
 
         # ════════════════════════════════════════════════════════════════════
         # STATE: SEARCH_LINE
-        # Spin OPPOSITE to avoidance turn while creeping forward to
-        # sweep back toward the original line.
-        #
-        # Strategy:
-        #   t < 6s  : spin + creep forward at 0.10 m/s
-        #   t >= 6s : spin + drive forward faster (0.15 m/s)
-        #             to cover more ground toward the line
+        # Spin OPPOSITE to avoidance turn while creeping forward.
+        # Only resume line following when obstacle is NOT in front.
         # ════════════════════════════════════════════════════════════════════
         elif self.state == SEARCH_LINE:
 
-            # Only re-trigger if VERY close (committed search)
-            if self.obstacle_detected and self.obs_min_dist < 0.20:
+            # Emergency: very close obstacle
+            if self.obs_min_dist < 0.20:
                 self.publish_vel(0.0, 0.0)
                 self.get_logger().info(
                     f'Obstacle at {self.obs_min_dist:.2f}m during search '
@@ -299,28 +312,40 @@ class ControllerNode(Node):
                 self.transition(OBSTACLE_DETECTED)
                 return
 
-            if self.line_visible():
+            # Re-acquire line ONLY if obstacle is NOT detected in front
+            if self.line_visible() and not self.obstacle_detected:
                 self.get_logger().info(
-                    f'Line re-acquired | error={self.line_error:.1f}px '
-                    f'→ FOLLOW_LINE')
+                    f'Line re-acquired + clear path | '
+                    f'error={self.line_error:.1f}px '
+                    f'obs={self.obs_min_dist:.2f}m → FOLLOW_LINE')
+                self.start_cooldown()
                 self.transition(FOLLOW_LINE)
+                return
+
+            # If line is visible but obstacle is still in front,
+            # keep moving to get past the obstacle first
+            if self.line_visible() and self.obstacle_detected:
+                # Drive forward to get past the obstacle
+                self.publish_vel(self.search_creep_spd * 1.5, 0.0)
+                if int(elapsed * 20) % 40 == 0:
+                    self.get_logger().info(
+                        f'Line visible but obstacle still ahead '
+                        f'({self.obs_min_dist:.2f}m) — driving past...')
                 return
 
             # Spin OPPOSITE to avoidance turn + creep forward
             spin = -self.turn_sign * self.search_rot_spd
 
             if elapsed < self.search_timeout:
-                # Normal search: spin + creep forward
                 self.publish_vel(self.search_creep_spd, spin)
             else:
-                # Extended search: drive forward faster to cover ground
-                # Reduce spin speed slightly so forward motion dominates
+                # Extended search: drive forward faster
                 self.publish_vel(self.line_speed, spin * 0.5)
 
             if int(elapsed * 20) % 40 == 0:
                 self.get_logger().info(
                     f'Searching... ({elapsed:.1f}s) '
-                    f'creep={"fast" if elapsed >= self.search_timeout else "normal"}')
+                    f'obs={self.obs_min_dist:.2f}m')
 
 
 def main(args=None):
