@@ -96,8 +96,8 @@ def generate_launch_description():
                 output='screen',
                 parameters=[{
                     'use_sim_time':                 True,
-                    'obstacle_distance_threshold':  0.70,   # was 0.45
-                    'front_fov_deg':                180,    # was 60
+                    'obstacle_distance_threshold':  0.55,
+                    'front_fov_deg':                90,
                 }],
             ),
         ],
@@ -119,10 +119,11 @@ def generate_launch_description():
                     'Kd':                           0.001,
                     'linear_speed':                 0.15,
                     'max_angular':                  2.0,
-                    'obstacle_distance_threshold':  0.70,   # was 0.45
-                    'avoid_turn_duration':          1.4,    # was 0.8
-                    'avoid_forward_duration':       1.2,    # was 0.7
-                    'timing_scale':                 1.5,    # was 2.0
+                    'obstacle_distance_threshold':  0.55,
+                    'phase1_turn_duration':         0.78,   # turn away ~90°
+                    'phase2_forward_duration':      2.0,    # drive alongside (0.40m)
+                    'phase3_turn_duration':         0.78,   # turn back ~90°
+                    'phase4_forward_duration':      2.5,    # drive past obstacle (0.50m)
                 }],
             ),
         ],

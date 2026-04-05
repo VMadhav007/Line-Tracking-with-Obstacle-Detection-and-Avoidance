@@ -30,8 +30,8 @@ class ObstacleDetectorNode(Node):
         super().__init__('obstacle_detector_node')
 
         # ── Parameters ────────────────────────────────────────────────────────
-        self.declare_parameter('obstacle_distance_threshold', 0.70)
-        self.declare_parameter('front_fov_deg',               180)
+        self.declare_parameter('obstacle_distance_threshold', 0.55)
+        self.declare_parameter('front_fov_deg',               90)
 
         self.threshold = self.get_parameter('obstacle_distance_threshold').value
         self.front_fov = int(self.get_parameter('front_fov_deg').value)

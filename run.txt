@@ -1,0 +1,2 @@
+source /opt/ros/humble/setup.bash && colcon build --packages-select line_tracker && source install/setup.bash && ros2 launch line_tracker simulation.launch.py
+source /opt/ros/humble/setup.bash && cd /home/pes1ug23cs679/mars_anti2 && colcon build --packages-select line_tracker 2>&1 && echo "BUILD OK"

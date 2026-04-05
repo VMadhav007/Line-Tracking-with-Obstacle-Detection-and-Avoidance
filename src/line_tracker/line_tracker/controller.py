@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
 """
-controller.py  —  4-State FSM
-==============================
+controller.py  —  FSM with committed rectangular bypass
+=========================================================
 States:
   FOLLOW_LINE       : PID line tracking (UNTOUCHED)
   OBSTACLE_DETECTED : immediate stop + pick turn direction
-  AVOID_OBSTACLE    : open-loop timed maneuver
-  SEARCH_LINE       : spin to re-acquire line
+  AVOID_OBSTACLE    : 4-phase committed bypass maneuver
+  SEARCH_LINE       : spin BACK toward line + drive to re-acquire
 
-Key fixes vs original:
-  - obstacle_distance_threshold : 0.45 → 0.70  (detect earlier)
-  - avoid_turn_duration         : 0.8  → 1.4   (turn more)
-  - avoid_forward_duration      : 0.7  → 1.2   (clear obstacle fully)
-  - timing_scale                : 2.0  → 1.5   (less rushed)
-  - avoid_turn_spd              : 1.80 → 2.20  (sharper turn)
-  - avoid_fwd_spd               : 0.20 → 0.12  (slower forward, safer)
-  - front_fov                   : 60°  → 90°   (wider detection cone)
-  - Added safety re-trigger if obstacle still close during forward drive
+Geometry of the bypass (example: turning LEFT):
+
+   Line ════════╗         ════════════ Line continues
+                ║ obstacle
+   Robot →      ║
+                ║
+         ┌──────┘
+   Ph1:  │ turn left 90°
+   Ph2:  │ drive forward 0.40m (straight, no curve!)
+         └──────┐
+   Ph3:         │ turn right 90° (back toward line)
+   Ph4:         │ drive forward 0.50m
+                └──→ SEARCH_LINE (spin right + creep forward)
 """
 
 import math
@@ -51,19 +55,30 @@ class ControllerNode(Node):
         self.max_angular = self.declare_parameter('max_angular',  2.0).value
 
         # ── Avoidance parameters ──────────────────────────────────────────────
-        self.obs_threshold  = self.declare_parameter(
-            'obstacle_distance_threshold', 0.70).value
-        self.avoid_turn_dur = self.declare_parameter(
-            'avoid_turn_duration',         1.4).value
-        self.avoid_fwd_dur  = self.declare_parameter(
-            'avoid_forward_duration',      1.2).value
-        self.timing_scale   = self.declare_parameter(
-            'timing_scale',                1.5).value
+        self.obs_threshold = self.declare_parameter(
+            'obstacle_distance_threshold', 0.55).value
+
+        # Phase durations (real-time seconds)
+        self.phase1_turn_dur = self.declare_parameter(
+            'phase1_turn_duration',   0.78).value   # Turn away ~90°
+        self.phase2_fwd_dur  = self.declare_parameter(
+            'phase2_forward_duration', 2.0).value   # Drive alongside: 0.40m
+        self.phase3_turn_dur = self.declare_parameter(
+            'phase3_turn_duration',   0.78).value   # Turn back ~90°
+        self.phase4_fwd_dur  = self.declare_parameter(
+            'phase4_forward_duration', 2.5).value   # Drive past: 0.50m
 
         # Physical speeds
-        self.avoid_turn_spd = 2.20   # rad/s — turn in place
-        self.avoid_fwd_spd  = 0.12   # m/s   — forward to clear obstacle
-        self.search_rot_spd = 0.50   # rad/s — spin while searching line
+        self.avoid_turn_spd   = 2.00   # rad/s — turn in place
+        self.avoid_fwd_spd    = 0.20   # m/s   — forward during bypass
+        self.search_rot_spd   = 0.80   # rad/s — spin while searching line
+        self.search_creep_spd = 0.10   # m/s   — creep forward while searching
+
+        # Emergency collision distance
+        self.emergency_dist = 0.12
+
+        # Search timeout — after this, drive forward aggressively
+        self.search_timeout = 6.0
 
         # ── Internal state ────────────────────────────────────────────────────
         self.state            = FOLLOW_LINE
@@ -96,11 +111,12 @@ class ControllerNode(Node):
         self.create_timer(0.05, self.control_loop)
 
         self.get_logger().info(
-            f'Controller ready | state={FOLLOW_LINE} | '
-            f'threshold={self.obs_threshold}m | '
-            f'turn_dur={self.avoid_turn_dur}s | '
-            f'fwd_dur={self.avoid_fwd_dur}s | '
-            f'timing_scale={self.timing_scale}')
+            f'Controller ready | threshold={self.obs_threshold}m | '
+            f'bypass: turn1={self.phase1_turn_dur}s '
+            f'fwd1={self.phase2_fwd_dur}s '
+            f'turn2={self.phase3_turn_dur}s '
+            f'fwd2={self.phase4_fwd_dur}s | '
+            f'fwd_spd={self.avoid_fwd_spd}m/s')
 
     # ── Callbacks ─────────────────────────────────────────────────────────────
 
@@ -163,7 +179,6 @@ class ControllerNode(Node):
 
         # ════════════════════════════════════════════════════════════════════
         # STATE: FOLLOW_LINE — UNTOUCHED
-        # PID line tracking. Obstacle detected → stop → OBSTACLE_DETECTED
         # ════════════════════════════════════════════════════════════════════
         if self.state == FOLLOW_LINE:
 
@@ -182,8 +197,6 @@ class ControllerNode(Node):
         # ════════════════════════════════════════════════════════════════════
         # STATE: OBSTACLE_DETECTED
         # Full stop. Pick turn direction from side LiDAR sectors.
-        #   left_min >= right_min → more room left  → turn left  (+1)
-        #   left_min <  right_min → more room right → turn right (-1)
         # ════════════════════════════════════════════════════════════════════
         elif self.state == OBSTACLE_DETECTED:
 
@@ -204,59 +217,110 @@ class ControllerNode(Node):
 
         # ════════════════════════════════════════════════════════════════════
         # STATE: AVOID_OBSTACLE
-        # Timed open-loop maneuver:
-        #   t < avoid_turn_dur              → turn in place
-        #   t < avoid_turn_dur + fwd_dur    → drive forward
-        #   safety: if obstacle still close while going forward → retry
+        # 4-phase COMMITTED rectangular bypass:
+        #
+        #   Phase 1: Turn ~90° AWAY from obstacle (pure rotation)
+        #   Phase 2: Drive STRAIGHT forward alongside obstacle
+        #            (0.20 m/s × 2.0s = 0.40m — NO curve!)
+        #   Phase 3: Turn ~90° BACK toward line (pure rotation)
+        #   Phase 4: Drive STRAIGHT forward past obstacle toward line
+        #            (0.20 m/s × 2.5s = 0.50m). Exit early if line found.
+        #
+        # Bypass is COMMITTED — no obstacle re-trigger except
+        # emergency collision (< 0.12m).
         # ════════════════════════════════════════════════════════════════════
         elif self.state == AVOID_OBSTACLE:
 
-            t = elapsed * self.timing_scale
+            t = elapsed
 
-            # Safety: still blocked while trying to go forward → re-evaluate
-            if t >= self.avoid_turn_dur and self.obs_min_dist < 0.40:
+            # Phase boundary times
+            p1_end = self.phase1_turn_dur
+            p2_end = p1_end + self.phase2_fwd_dur
+            p3_end = p2_end + self.phase3_turn_dur
+            p4_end = p3_end + self.phase4_fwd_dur
+
+            # ── Emergency collision check (any phase) ─────────────────────
+            if self.obs_min_dist < self.emergency_dist:
                 self.publish_vel(0.0, 0.0)
+                self.get_logger().warn(
+                    f'EMERGENCY: obstacle at {self.obs_min_dist:.2f}m — '
+                    f'stopping and re-evaluating')
                 self.transition(OBSTACLE_DETECTED)
                 return
 
-            turn_end = self.avoid_turn_dur
-            fwd_end  = self.avoid_turn_dur + self.avoid_fwd_dur
-
-            if t < turn_end:
-                # Segment 1: turn in place
+            if t < p1_end:
+                # ── Phase 1: Turn AWAY from obstacle ──────────────────────
                 self.publish_vel(0.0, self.turn_sign * self.avoid_turn_spd)
 
-            elif t < fwd_end:
-                # Segment 2: drive forward to clear obstacle
+            elif t < p2_end:
+                # ── Phase 2: Drive STRAIGHT forward ───────────────────────
+                # No curve! Pure forward motion to maintain heading.
+                self.publish_vel(self.avoid_fwd_spd, 0.0)
+
+            elif t < p3_end:
+                # ── Phase 3: Turn BACK toward line ────────────────────────
+                self.publish_vel(0.0, -self.turn_sign * self.avoid_turn_spd)
+
+            elif t < p4_end:
+                # ── Phase 4: Drive STRAIGHT toward line ───────────────────
+                # If line is visible, exit early to follow it
+                if self.line_visible():
+                    self.get_logger().info(
+                        f'Line found during phase 4 '
+                        f'(error={self.line_error:.0f}px) → FOLLOW_LINE')
+                    self.transition(FOLLOW_LINE)
+                    return
                 self.publish_vel(self.avoid_fwd_spd, 0.0)
 
             else:
-                # Maneuver complete → search for line
+                # ── All 4 phases done → search for line ───────────────────
                 self.publish_vel(0.0, 0.0)
+                self.get_logger().info('Bypass complete → SEARCH_LINE')
                 self.transition(SEARCH_LINE)
 
         # ════════════════════════════════════════════════════════════════════
         # STATE: SEARCH_LINE
-        # Spin slowly to sweep camera and re-acquire the line.
-        #   obstacle still present → OBSTACLE_DETECTED
-        #   line found             → FOLLOW_LINE
-        #   otherwise              → keep spinning
+        # Spin OPPOSITE to avoidance turn while creeping forward to
+        # sweep back toward the original line.
+        #
+        # Strategy:
+        #   t < 6s  : spin + creep forward at 0.10 m/s
+        #   t >= 6s : spin + drive forward faster (0.15 m/s)
+        #             to cover more ground toward the line
         # ════════════════════════════════════════════════════════════════════
         elif self.state == SEARCH_LINE:
 
-            if self.obstacle_detected:
+            # Only re-trigger if VERY close (committed search)
+            if self.obstacle_detected and self.obs_min_dist < 0.20:
                 self.publish_vel(0.0, 0.0)
+                self.get_logger().info(
+                    f'Obstacle at {self.obs_min_dist:.2f}m during search '
+                    f'→ re-evaluate')
                 self.transition(OBSTACLE_DETECTED)
                 return
 
             if self.line_visible():
                 self.get_logger().info(
-                    f'Line re-acquired | error={self.line_error:.1f}px → FOLLOW_LINE')
+                    f'Line re-acquired | error={self.line_error:.1f}px '
+                    f'→ FOLLOW_LINE')
                 self.transition(FOLLOW_LINE)
                 return
 
-            # Keep spinning in same direction as avoidance turn
-            self.publish_vel(0.0, self.turn_sign * self.search_rot_spd)
+            # Spin OPPOSITE to avoidance turn + creep forward
+            spin = -self.turn_sign * self.search_rot_spd
+
+            if elapsed < self.search_timeout:
+                # Normal search: spin + creep forward
+                self.publish_vel(self.search_creep_spd, spin)
+            else:
+                # Extended search: drive forward faster to cover ground
+                # Reduce spin speed slightly so forward motion dominates
+                self.publish_vel(self.line_speed, spin * 0.5)
+
+            if int(elapsed * 20) % 40 == 0:
+                self.get_logger().info(
+                    f'Searching... ({elapsed:.1f}s) '
+                    f'creep={"fast" if elapsed >= self.search_timeout else "normal"}')
 
 
 def main(args=None):
