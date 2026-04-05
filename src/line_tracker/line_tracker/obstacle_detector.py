@@ -1,72 +1,124 @@
 #!/usr/bin/env python3
 """
 obstacle_detector.py
-Subscribes to /scan (LaserScan).
-Publishes /obstacle_flag (Bool) — True if obstacle within threshold.
+=====================
+Reads LiDAR /scan and detects obstacles in the front cone.
+
+IMPORTANT: On this robot, angle_min = -180deg, so:
+  index 0   = directly BEHIND the robot
+  index 180 = directly IN FRONT of the robot
+
+All arc calculations are centered on index 180 (front).
+
+Publishes:
+  /obstacle/detected      (Bool)    — True when obstacle in front cone
+  /obstacle/min_distance  (Float32) — minimum distance in front cone
+  /obstacle/left_min      (Float32) — min dist in left sector
+  /obstacle/right_min     (Float32) — min dist in right sector
 """
 
+import math
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Float32
 
 
-class ObstacleDetector(Node):
+class ObstacleDetectorNode(Node):
 
     def __init__(self):
-        super().__init__('obstacle_detector')
+        super().__init__('obstacle_detector_node')
 
-        # --- Parameters (easy to tune) ---
-        self.declare_parameter('threshold_m',     0.5)   # stop distance in metres
-        self.declare_parameter('front_angle_deg', 30)    # half-width of front arc
+        # ── Parameters ────────────────────────────────────────────────────────
+        self.declare_parameter('obstacle_distance_threshold', 0.70)
+        self.declare_parameter('front_fov_deg',               180)
 
-        self.threshold  = self.get_parameter('threshold_m').value
-        self.half_angle = self.get_parameter('front_angle_deg').value
+        self.threshold = self.get_parameter('obstacle_distance_threshold').value
+        self.front_fov = int(self.get_parameter('front_fov_deg').value)
+        self.half_fov  = self.front_fov // 2
 
-        # --- ROS interfaces ---
-        self.sub = self.create_subscription(
-            LaserScan, '/scan', self.scan_callback, 10)
+        # ── Publishers ────────────────────────────────────────────────────────
+        self.pub_detected  = self.create_publisher(Bool,    '/obstacle/detected',     10)
+        self.pub_min_dist  = self.create_publisher(Float32, '/obstacle/min_distance', 10)
+        self.pub_left_min  = self.create_publisher(Float32, '/obstacle/left_min',     10)
+        self.pub_right_min = self.create_publisher(Float32, '/obstacle/right_min',    10)
 
-        self.pub = self.create_publisher(Bool, '/obstacle_flag', 10)
+        # ── Subscriber ────────────────────────────────────────────────────────
+        self.create_subscription(LaserScan, '/scan', self.scan_cb, 10)
 
         self.get_logger().info(
-            f'ObstacleDetector ready | threshold={self.threshold}m '
-            f'| front arc=\u00b1{self.half_angle}\u00b0')
+            f'ObstacleDetector ready | '
+            f'threshold={self.threshold}m | front_fov={self.front_fov}deg | '
+            f'front_index=180 (angle_min=-pi convention)')
 
-    def scan_callback(self, msg: LaserScan):
+    # ── Helpers ───────────────────────────────────────────────────────────────
+
+    @staticmethod
+    def _min_in_arc(ranges, start_idx, end_idx, n, range_max):
+        """
+        Return minimum valid reading in index arc [start_idx, end_idx) mod n.
+        Returns math.inf if no valid readings.
+        """
+        vals  = []
+        idx   = start_idx % n
+        steps = (end_idx - start_idx) % n
+        for _ in range(steps):
+            r = ranges[idx]
+            if not math.isnan(r) and not math.isinf(r) and 0.005 < r < range_max:
+                vals.append(r)
+            idx = (idx + 1) % n
+        return min(vals) if vals else math.inf
+
+    # ── Main callback ─────────────────────────────────────────────────────────
+
+    def scan_cb(self, msg: LaserScan):
         ranges = msg.ranges
-        n      = len(ranges)          # usually 360
+        n      = len(ranges)   # 360
+        rmax   = msg.range_max
 
-        # Build front arc indices
-        arc_size  = self.half_angle   # e.g. 30
-        front_idx = (list(range(n - arc_size, n)) +
-                     list(range(0, arc_size + 1)))
+        # Front of robot = index 180 (since angle_min = -pi = index 0 = behind)
+        front_center = n // 2   # = 180
+        half         = self.half_fov
 
-        # Filter NaN / inf / out-of-range readings
-        valid = [
-            ranges[i]
-            for i in front_idx
-            if i < n and
-               ranges[i] == ranges[i] and           # not NaN
-               0.01 < ranges[i] < msg.range_max     # valid range
-        ]
+        # Front cone: centered at index 180
+        front_right = self._min_in_arc(ranges, front_center - half, front_center,        n, rmax)
+        front_left  = self._min_in_arc(ranges, front_center,        front_center + half, n, rmax)
+        d_min_front = min(front_left, front_right)
 
-        # Detect obstacle
-        obstacle  = bool(valid) and any(r < self.threshold for r in valid)
+        obstacle = d_min_front < self.threshold
 
-        flag      = Bool()
-        flag.data = obstacle
-        self.pub.publish(flag)
+        # Side sectors for turn direction decision
+        # Left:  front+half to front+135
+        # Right: front-135  to front-half
+        left_min  = self._min_in_arc(ranges, front_center + half, front_center + 135, n, rmax)
+        right_min = self._min_in_arc(ranges, front_center - 135,  front_center - half, n, rmax)
+
+        # ── Publish ───────────────────────────────────────────────────────────
+        det = Bool()
+        det.data = obstacle
+        self.pub_detected.publish(det)
+
+        md = Float32()
+        md.data = float(d_min_front if d_min_front != math.inf else 9.99)
+        self.pub_min_dist.publish(md)
+
+        lm = Float32()
+        lm.data = float(left_min if left_min != math.inf else 9.99)
+        self.pub_left_min.publish(lm)
+
+        rm = Float32()
+        rm.data = float(right_min if right_min != math.inf else 9.99)
+        self.pub_right_min.publish(rm)
 
         if obstacle:
-            min_dist = min(valid)
-            self.get_logger().debug(
-                f'OBSTACLE detected | closest={min_dist:.2f}m')
+            self.get_logger().info(
+                f'OBSTACLE | d_min={d_min_front:.2f}m '
+                f'| left={left_min:.2f}m right={right_min:.2f}m')
 
 
 def main(args=None):
     rclpy.init(args=args)
-    node = ObstacleDetector()
+    node = ObstacleDetectorNode()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
