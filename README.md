@@ -578,6 +578,7 @@ ros2 run rqt_plot rqt_plot /line_error/data
 | Name | Email | Role |
 |------|-------|------|
 | **MARS CIoT Lab** | mars.ciot@pes.edu | Admin / Contributor |
+| **VMadhav007** | madhav0570@gmail.com | Contributor |
 
 ---
 
