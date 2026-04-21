@@ -60,6 +60,18 @@
       </link>
     </model>
 
+    <!-- ── Center perpendicular connector ────────────────────────── -->
+    <model name="line_center">
+      <static>true</static>
+      <pose>0 0 0.001 0 0 1.5708</pose>
+      <link name="link">
+        <visual name="vis">
+          <geometry><box><size>2.56 0.06 0.001</size></box></geometry>
+          <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
     <!-- Right semicircle: approximate with 8 short segments -->
     <model name="line_rc0"><static>true</static>
       <pose>2.0  1.087 0.001 0 0 -0.3927</pose>
